@@ -330,12 +330,17 @@ function getPlacement() {
   let eyesX, eyesY, angle=0, yaw=0, gw;
   if (manualPoint) {
     eyesX = manualPoint.x; eyesY = manualPoint.y;
-    gw = Math.round(pw * 0.4 * fs);
+    gw = Math.max(Math.round(pw * 0.4 * fs), Math.round(pw * 0.20), 80);
+    gw = Math.min(gw, Math.round(pw * 0.55));
   } else if (face) {
     eyesX=face.midX; eyesY=face.midY; angle=face.angle; yaw=face.yaw;
     gw = Math.round(Math.max(face.faceWidth*fs, face.eyeSpan*2.8, face.faceWidth*1.45));
+    // Clamp: minimum 20% of image (readable on small/distant faces), max 55% (no overflow on close-ups)
+    gw = Math.max(gw, Math.round(pw * 0.20), 80);
+    gw = Math.min(gw, Math.round(pw * 0.55));
   } else {
-    eyesX=pw/2; eyesY=ph*0.35; gw=Math.round(pw*0.45*fs);
+    eyesX=pw/2; eyesY=ph*0.35; gw=Math.max(Math.round(pw*0.45*fs), Math.round(pw*0.20), 80);
+    gw = Math.min(gw, Math.round(pw * 0.55));
   }
   const flipH = yaw < -5;
   const glasses = getScaledGlasses(gw, angle+rotAdj, flipH);
@@ -524,6 +529,8 @@ async function handlePhoto(f) {
     console.error("Face detection error:", e);
     allFaces = [];
   }
+  // Sort by face width descending — biggest/most prominent face first
+  allFaces.sort((a, b) => b.faceWidth - a.faceWidth);
   face = allFaces[0] || null;
 
   if (allFaces.length > 1) {
@@ -548,7 +555,7 @@ async function handlePhoto(f) {
     $("status").textContent = "Face detected — generating GIF…";
   } else {
     // No face — show preview for click-to-place
-    $("status").textContent = "No face detected — click on the photo to place glasses";
+    $("status").textContent = "No face detected — try a closer, front-facing photo or click below to place glasses manually";
     $("previewWrap").style.display = "";
     const pc = $("previewCanvas");
     pc.width = photoImg.naturalWidth; pc.height = photoImg.naturalHeight;
