@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deal With It 😎</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 2rem 0 0.5rem;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #888;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 0 1.5rem;
+        }
+
+        /* Drop zone */
+        .drop-zone {
+            border: 3px dashed #333;
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #111;
+            position: relative;
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #f0c040;
+            background: #1a1700;
+        }
+
+        .drop-zone input[type="file"] {
+            display: none;
+        }
+
+        .drop-zone .icon { font-size: 3rem; margin-bottom: 0.5rem; }
+        .drop-zone .label { font-size: 1.1rem; color: #aaa; }
+
+        .preview-container {
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+
+        .preview-container img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            border: 2px solid #222;
+        }
+
+        /* Options */
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .option-group label {
+            font-size: 0.85rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .option-group input[type="range"] {
+            accent-color: #f0c040;
+        }
+
+        .option-group .value {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: right;
+        }
+
+        /* Glasses upload */
+        .glasses-upload {
+            margin: 1rem 0;
+            padding: 1rem;
+            border: 1px solid #222;
+            border-radius: 10px;
+            background: #0d0d0d;
+        }
+
+        .glasses-upload summary {
+            cursor: pointer;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .glasses-upload .inner {
+            margin-top: 0.75rem;
+        }
+
+        /* Generate button */
+        .generate-btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #f0c040;
+            color: #000;
+            transition: all 0.15s;
+            margin: 1rem 0;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            background: #ffd060;
+            transform: translateY(-1px);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .generate-btn.loading {
+            background: #555;
+            color: #aaa;
+        }
+
+        /* Result */
+        .result {
+            text-align: center;
+            margin: 2rem 0 3rem;
+        }
+
+        .result img {
+            max-width: 100%;
+            border-radius: 12px;
+            border: 2px solid #333;
+            margin-bottom: 1rem;
+        }
+
+        .download-btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            background: #2ea043;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.15s;
+        }
+
+        .download-btn:hover {
+            background: #3fb950;
+        }
+
+        .error {
+            color: #f85149;
+            background: #1a0000;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 1px solid #3d0000;
+        }
+
+        footer {
+            margin: 3rem 0 2rem;
+            color: #444;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>😎 Deal With It</h1>
+    <p class="subtitle">Upload a face. Get a meme.</p>
+
+    <div class="container">
+        <!-- Photo upload -->
+        <div class="drop-zone" id="dropZone">
+            <div class="icon">📷</div>
+            <div class="label">Drop a photo here or click to upload</div>
+            <input type="file" id="photoInput" accept="image/*">
+        </div>
+
+        <div class="preview-container" id="previewContainer" style="display:none">
+            <img id="preview" alt="Preview">
+        </div>
+
+        <!-- Options -->
+        <div class="options">
+            <div class="option-group">
+                <label>Glasses Size</label>
+                <input type="range" id="faceScale" min="0.8" max="1.8" step="0.05" value="1.3">
+                <div class="value" id="faceScaleVal">130%</div>
+            </div>
+            <div class="option-group">
+                <label>Drop Speed</label>
+                <input type="range" id="speed" min="20" max="100" step="5" value="50">
+                <div class="value" id="speedVal">50ms</div>
+            </div>
+        </div>
+
+        <!-- Custom glasses -->
+        <details class="glasses-upload">
+            <summary>🕶️ Use custom glasses image</summary>
+            <div class="inner">
+                <input type="file" id="glassesInput" accept="image/png">
+                <p style="font-size:0.8rem;color:#555;margin-top:0.5rem">
+                    PNG with transparent or white background. Leave empty for classic pixel shades.
+                </p>
+            </div>
+        </details>
+
+        <button class="generate-btn" id="generateBtn" disabled>
+            😎 Deal With It
+        </button>
+
+        <div id="error" class="error" style="display:none"></div>
+
+        <div class="result" id="result" style="display:none">
+            <img id="resultGif" alt="Deal With It GIF">
+            <br>
+            <a class="download-btn" id="downloadBtn" download="deal_with_it.gif">
+                ⬇ Download GIF
+            </a>
+        </div>
+    </div>
+
+    <footer>Powered by MediaPipe Face Mesh · No data stored</footer>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const photoInput = document.getElementById('photoInput');
+        const glassesInput = document.getElementById('glassesInput');
+        const preview = document.getElementById('preview');
+        const previewContainer = document.getElementById('previewContainer');
+        const generateBtn = document.getElementById('generateBtn');
+        const resultDiv = document.getElementById('result');
+        const resultGif = document.getElementById('resultGif');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const errorDiv = document.getElementById('error');
+        const faceScale = document.getElementById('faceScale');
+        const faceScaleVal = document.getElementById('faceScaleVal');
+        const speed = document.getElementById('speed');
+        const speedVal = document.getElementById('speedVal');
+
+        let photoFile = null;
+
+        // Drag and drop
+        dropZone.addEventListener('click', () => photoInput.click());
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handlePhoto(e.dataTransfer.files[0]);
+        });
+        photoInput.addEventListener('change', () => {
+            if (photoInput.files.length) handlePhoto(photoInput.files[0]);
+        });
+
+        function handlePhoto(file) {
+            photoFile = file;
+            const url = URL.createObjectURL(file);
+            preview.src = url;
+            previewContainer.style.display = 'block';
+            generateBtn.disabled = false;
+            resultDiv.style.display = 'none';
+            errorDiv.style.display = 'none';
+        }
+
+        // Sliders
+        faceScale.addEventListener('input', () => {
+            faceScaleVal.textContent = Math.round(faceScale.value * 100) + '%';
+        });
+        speed.addEventListener('input', () => {
+            speedVal.textContent = speed.value + 'ms';
+        });
+
+        // Generate
+        generateBtn.addEventListener('click', async () => {
+            if (!photoFile) return;
+
+            generateBtn.disabled = true;
+            generateBtn.textContent = '⏳ Generating...';
+            generateBtn.classList.add('loading');
+            errorDiv.style.display = 'none';
+            resultDiv.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('photo', photoFile);
+            formData.append('face_scale', faceScale.value);
+            formData.append('speed', speed.value);
+
+            if (glassesInput.files.length) {
+                formData.append('glasses', glassesInput.files[0]);
+            }
+
+            try {
+                const resp = await fetch('/generate', { method: 'POST', body: formData });
+
+                if (!resp.ok) {
+                    const data = await resp.json();
+                    throw new Error(data.error || 'Generation failed');
+                }
+
+                const blob = await resp.blob();
+                const url = URL.createObjectURL(blob);
+                resultGif.src = url;
+                downloadBtn.href = url;
+                resultDiv.style.display = 'block';
+            } catch (err) {
+                errorDiv.textContent = '❌ ' + err.message;
+                errorDiv.style.display = 'block';
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = '😎 Deal With It';
+                generateBtn.classList.remove('loading');
+            }
+        });
+    </script>
+</body>
+</html>

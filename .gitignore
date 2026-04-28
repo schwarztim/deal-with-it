@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.gif
+face_landmarker.task
+.DS_Store
+venv/
