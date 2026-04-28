@@ -421,8 +421,12 @@ async function generateGIF() {
   };
   const txt = $("textContent").value;
 
+  if (!window._gifWorkerBlob) {
+    const r = await fetch("https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js");
+    window._gifWorkerBlob = URL.createObjectURL(await r.blob());
+  }
   const gif = new GIF({workers:2, quality:10, width:pw, height:ph,
-    workerScript:"https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js"});
+    workerScript: window._gifWorkerBlob});
   const fc = document.createElement("canvas"); fc.width=pw; fc.height=ph;
   const fctx = fc.getContext("2d");
 
