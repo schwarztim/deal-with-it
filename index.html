@@ -6,54 +6,64 @@
 <title>Deal With It 😎</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Bangers&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
+:root{
+  --bg:#1a1a2e;--bg2:#16213e;--bg3:#0f3460;--fg:#e0e0e0;--fg2:#aaa;--fg3:#888;--fg4:#555;
+  --accent:#e94560;--accent-h:#c73e55;--border:#444;--border2:#333;
+  --preview-bg:#111;--spinner-bg:#333;--disabled:#555;--btn2:#0f3460;--btn2-h:#1a4a80;
+}
+@media(prefers-color-scheme:light){:root{
+  --bg:#f5f5f7;--bg2:#ffffff;--bg3:#f0f0f5;--fg:#1a1a2e;--fg2:#555;--fg3:#777;--fg4:#aaa;
+  --accent:#d63050;--accent-h:#b82845;--border:#ccc;--border2:#ddd;
+  --preview-bg:#eee;--spinner-bg:#ccc;--disabled:#bbb;--btn2:#e8e8f0;--btn2-h:#d8d8e5;
+}}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#1a1a2e;color:#e0e0e0;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--fg);min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px;transition:background .2s,color .2s}
 h1{font-size:2.2rem;margin:16px 0;text-align:center}
 h1 span{font-size:2.5rem}
 .container{max-width:800px;width:100%;display:flex;flex-direction:column;gap:14px}
-.section-title{font-size:.85rem;color:#e94560;font-weight:bold;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
-.section-title .toggle{font-size:.75rem;color:#888;cursor:pointer;text-decoration:underline;text-transform:none;letter-spacing:0}
-.drop-zone{border:3px dashed #444;border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#16213e}
-.drop-zone:hover,.drop-zone.dragover{border-color:#e94560;background:#1a1a3e}
-.drop-zone p{font-size:1rem;color:#888}
+.section-title{font-size:.85rem;color:var(--accent);font-weight:bold;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+.section-title .toggle{font-size:.75rem;color:var(--fg3);cursor:pointer;text-decoration:underline;text-transform:none;letter-spacing:0}
+.drop-zone{border:3px dashed var(--border);border-radius:16px;padding:40px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg2)}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);background:var(--bg3)}
+.drop-zone p{font-size:1rem;color:var(--fg3)}
 .drop-zone .icon{font-size:2.5rem;margin-bottom:8px}
 .drop-zone input{display:none}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.og{background:#16213e;border-radius:10px;padding:12px}
-.og label{display:block;font-size:.75rem;color:#aaa;margin-bottom:4px}
-.og input[type="range"]{width:100%;accent-color:#e94560}
-.og .val{text-align:center;font-weight:bold;color:#e94560;margin-top:2px;font-size:.8rem}
-.og select,.og input[type="text"]{width:100%;padding:7px;border-radius:8px;border:1px solid #333;background:#0f3460;color:#e0e0e0;font-size:.85rem}
+.og{background:var(--bg2);border-radius:10px;padding:12px}
+.og label{display:block;font-size:.75rem;color:var(--fg2);margin-bottom:4px}
+.og input[type="range"]{width:100%;accent-color:var(--accent)}
+.og .val{text-align:center;font-weight:bold;color:var(--accent);margin-top:2px;font-size:.8rem}
+.og select,.og input[type="text"]{width:100%;padding:7px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--fg);font-size:.85rem}
 .og input[type="color"]{width:40px;height:28px;border:none;border-radius:6px;cursor:pointer;background:transparent;vertical-align:middle}
 .cr{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.cr span{font-size:.75rem;color:#aaa}
+.cr span{font-size:.75rem;color:var(--fg2)}
 .full{grid-column:1/-1}
 .cg{grid-column:1/-1;text-align:center}
-.cg label{cursor:pointer;color:#e94560;text-decoration:underline;font-size:.8rem}
+.cg label{cursor:pointer;color:var(--accent);text-decoration:underline;font-size:.8rem}
 .cg input{display:none}
 /* Preview */
-.preview-wrap{position:relative;background:#111;border-radius:12px;overflow:hidden;text-align:center}
+.preview-wrap{position:relative;background:var(--preview-bg);border-radius:12px;overflow:hidden;text-align:center}
 .preview-wrap canvas{max-width:100%;height:auto;display:block;margin:0 auto}
-.preview-placeholder{padding:40px;color:#555;font-size:.9rem}
+.preview-placeholder{padding:40px;color:var(--fg4);font-size:.9rem}
 /* Buttons */
 .btn{display:inline-block;padding:12px 32px;border:none;border-radius:10px;font-size:1rem;font-weight:bold;cursor:pointer;transition:all .2s}
-.btn-generate{background:#e94560;color:#fff;width:100%}
-.btn-generate:hover{background:#c73e55}
-.btn-generate:disabled{background:#555;cursor:not-allowed}
-.btn-download{background:#0f3460;color:#fff;margin-top:8px}
-.btn-download:hover{background:#1a4a80}
-.status{text-align:center;padding:6px;color:#aaa;font-size:.8rem}
-.status.error{color:#e94560}
+.btn-generate{background:var(--accent);color:#fff;width:100%}
+.btn-generate:hover{background:var(--accent-h)}
+.btn-generate:disabled{background:var(--disabled);cursor:not-allowed}
+.btn-download{background:var(--btn2);color:var(--fg);margin-top:8px}
+.btn-download:hover{background:var(--btn2-h)}
+.status{text-align:center;padding:6px;color:var(--fg2);font-size:.8rem}
+.status.error{color:var(--accent)}
 .loading{display:none;text-align:center;padding:16px}
 .loading.active{display:block}
-.loading .spinner{display:inline-block;width:36px;height:36px;border:4px solid #333;border-top:4px solid #e94560;border-radius:50%;animation:spin 1s linear infinite}
+.loading .spinner{display:inline-block;width:36px;height:36px;border:4px solid var(--spinner-bg);border-top:4px solid var(--accent);border-radius:50%;animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.init-status{text-align:center;padding:8px;background:#16213e;border-radius:8px;font-size:.75rem;color:#888}
+.init-status{text-align:center;padding:8px;background:var(--bg2);border-radius:8px;font-size:.75rem;color:var(--fg3)}
 .init-status.ready{color:#4caf50}
 .init-status.loading{color:#ff9800}
 .result-area{text-align:center}
-.result-area img{max-width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.result-area img{max-width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
 .hidden{display:none !important}
 </style>
 </head>
