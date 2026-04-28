@@ -212,6 +212,7 @@ let manualPoint = null;
 let hasGenerated = false;
 
 let faceLandmarker = null;
+let mediaPipeReady = null;
 async function initMediaPipe() {
   try {
     const {FilesetResolver, FaceLandmarker} = await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm");
@@ -231,7 +232,8 @@ async function initMediaPipe() {
     console.warn("MediaPipe load failed:", e);
   }
 }
-await initMediaPipe();
+// Init MediaPipe in background — don't block UI event wiring
+mediaPipeReady = initMediaPipe();
 
 // ─── Landmarks ─────────────────────────────────────────────────
 const L = {LE:468,RE:473,LEI:133,LEO:33,REI:362,REO:263,LT:234,RT:454,N:1,LC:127,RC:356,LJ:172,RJ:397};
@@ -521,6 +523,12 @@ async function handlePhoto(f) {
   // Load glasses
   try { await ensureRawGlasses(); } catch(e) {
     console.error("Glasses load error:", e);
+  }
+
+  // Wait for MediaPipe if still loading
+  if (mediaPipeReady) {
+    $("status").textContent = "Waiting for face detection to load…";
+    await mediaPipeReady;
   }
 
   // Detect faces
