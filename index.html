@@ -502,7 +502,8 @@ async function handlePhoto(f) {
   $("generateBtn").style.display = "none";
   manualPoint = null;
   hasGenerated = false;
-  dz.innerHTML = `<div class="icon">✅</div><p>${f.name}</p>`;
+  dz.querySelector(".icon").textContent = "✅";
+  dz.querySelector("p").textContent = f.name;
 
   // Load image
   try {
